@@ -22,7 +22,7 @@ import {
 } from './dto';
 
 @Controller('api/auth')
-@ApiTags('authentication')
+@ApiTags('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,

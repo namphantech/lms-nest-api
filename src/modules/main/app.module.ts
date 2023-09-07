@@ -12,12 +12,19 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { ScheduleModule } from '@nestjs/schedule';
 import { AuthModule } from '../auth';
 import { UserModule } from './../user';
+import appConfig from 'modules/config/app.config';
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: '.env',
       isGlobal: true,
-      load: [nodeMailConfig, databaseConfig, redisConfig, authConfig],
+      load: [
+        nodeMailConfig,
+        databaseConfig,
+        redisConfig,
+        authConfig,
+        appConfig,
+      ],
     }),
     CacheModule.register({
       isGlobal: true,
@@ -40,10 +47,11 @@ import { UserModule } from './../user';
           password: configService.get('database.password'),
           database: configService.get('database.database'),
           synchronize:
-            configService.get('database.isAsync') === true ? true : false,
+            configService.get('database.isAsync') === 'false' ? false : true,
           autoLoadEntities: true,
           logging: true,
-          entities: [__dirname + './../**/**.entity{.ts,.js}'],
+          ssl: true,
+          entities: [__dirname + './**/**.entity{.ts,.js}'],
         } as TypeOrmModuleAsyncOptions;
       },
     }),

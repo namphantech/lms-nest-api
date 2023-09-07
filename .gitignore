@@ -44,3 +44,4 @@ example.env
 /test/example.sql
 /test/test.json
 /public
+.example.env
