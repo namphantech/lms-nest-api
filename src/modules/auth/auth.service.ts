@@ -16,6 +16,7 @@ import { Repository } from 'typeorm';
 import * as moment from 'moment';
 import { v4 as uuidv4 } from 'uuid';
 import { ResetPasswordDto } from './dto';
+import { MyMailService } from 'modules/mail/mail.service';
 interface Tokens {
   accessToken: string;
   refreshToken: string;
@@ -28,6 +29,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     private readonly userService: UsersService,
+    private readonly mailService: MyMailService,
   ) {}
 
   async createToken(user: User): Promise<Tokens> {
@@ -90,12 +92,12 @@ export class AuthService {
       user.resetPasswordToken = resetPasswordToken;
       user.resetPasswordTokenExpire = resetPasswordTokenExpire;
       await this.userService.updateUser(user);
-      // await this.mailService.forgotPassword({
-      //   to: email,
-      //   data: {
-      //     hash: resetPasswordToken,
-      //   },
-      // });
+      await this.mailService.forgotPassword({
+        to: email,
+        data: {
+          hash: resetPasswordToken,
+        },
+      });
       return {
         message:
           'Your reset password request has been confirmed. Please check your email, the token will expire in 10 minutes!',

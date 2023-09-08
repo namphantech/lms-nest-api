@@ -87,12 +87,13 @@ export class CrudUserController implements CrudController<User> {
     return this;
   }
 
-  @Override()
+  @Override('createOneBase')
   async createOne(
     @ParsedRequest() req: CrudRequest,
     @ParsedBody() dto: CreateUserDto,
     @GetCurrentUser() user: User,
   ) {
+    console.log('ROLE', dto.roleId);
     const checkEmailUser = await this.service.findOne({
       where: {
         email: dto.email,

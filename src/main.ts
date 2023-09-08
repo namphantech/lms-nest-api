@@ -6,17 +6,13 @@ import { AppModule } from './modules/main/app.module';
 async function bootstrap() {
   const logger = new Logger('testing');
   const app = await NestFactory.create(AppModule);
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-    }),
-  );
+  app.useGlobalPipes(new ValidationPipe());
   app.enableCors();
 
   //Swagger
   const config = new DocumentBuilder()
     .setTitle('the-creative-space-api')
-    .setDescription('Learn Nestjs from scratch by Nam Phan')
+    .setDescription('the-creative-space API Description')
     .setVersion('1.0')
     .addBearerAuth()
     .build();

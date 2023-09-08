@@ -4,9 +4,9 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as path from 'path';
+
 @Injectable()
 export class MailConfigService implements MailerOptionsFactory {
-  private readonly _ses: any;
   constructor(private configService: ConfigService) {}
   createMailerOptions(): MailerOptions {
     return {
@@ -21,7 +21,7 @@ export class MailConfigService implements MailerOptionsFactory {
       defaults: {
         from: `"${this.configService.get(
           'mail.defaultName'
-        )}" <${this.configService.get('awsSES.emailSender')}>`,
+        )}" <${this.configService.get('mail.defaultEmail')}>`,
       },
       template: {
         dir: path.join(
