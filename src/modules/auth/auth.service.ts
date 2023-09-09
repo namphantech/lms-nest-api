@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Hash } from './../../utils/Hash';
-import { Role, User } from '../entities';
+import { Role } from '../entities';
 import { UsersService } from './../user';
 import { LoginPayload } from './dto';
 import { ConfigService } from '@nestjs/config';
@@ -17,7 +17,8 @@ import * as moment from 'moment';
 import { v4 as uuidv4 } from 'uuid';
 import { ResetPasswordDto } from './dto';
 import { MyMailService } from 'modules/mail/mail.service';
-interface Tokens {
+import { Message } from 'modules/common/constants/message';
+export interface Tokens {
   accessToken: string;
   refreshToken: string;
 }
@@ -32,15 +33,15 @@ export class AuthService {
     private readonly mailService: MyMailService,
   ) {}
 
-  async createToken(user: User): Promise<Tokens> {
+  async createToken(userId: number): Promise<Tokens> {
     const issuedTime = Math.floor(Date.now() / 1000);
     const accessToken = await this.jwtService.signAsync({
-      sub: user.id,
+      sub: userId,
       iat: issuedTime,
     });
     const refreshToken = await this.jwtService.signAsync(
       {
-        sub: user.id,
+        sub: userId,
         iat: issuedTime,
       },
       { expiresIn: this.configService.get('auth.refreshTokenTime') },
@@ -49,6 +50,18 @@ export class AuthService {
       accessToken,
       refreshToken,
     };
+  }
+
+  async verifyRefreshToken(refreshToken: string): Promise<any> {
+    try {
+      const payload = await this.jwtService.verifyAsync(refreshToken, {
+        secret: this.configService.get('auth.secret'),
+      });
+
+      return payload;
+    } catch (error) {
+      throw new HttpException(Message.INVALID_TOKEN, HttpStatus.UNAUTHORIZED);
+    }
   }
 
   async validateUser(payload: LoginPayload): Promise<any> {

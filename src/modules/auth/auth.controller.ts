@@ -9,7 +9,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags, ApiBody } from '@nestjs/swagger';
 import { AuthService } from './';
 import { GetCurrentUser } from './../common/decorators';
 import { UsersService } from './../user';
@@ -20,6 +20,8 @@ import {
   AuthForgotPasswordDto,
   ResetPasswordDto,
 } from './dto';
+import { Summary } from 'modules/common/constants/swagger';
+import { Tokens } from './auth.service';
 
 @Controller('api/auth')
 @ApiTags('auth')
@@ -32,7 +34,7 @@ export class AuthController {
   @Post('login')
   async login(@Body() payload: LoginPayload): Promise<any> {
     const user: User = await this.authService.validateUser(payload);
-    const tokens = await this.authService.createToken(user);
+    const tokens = await this.authService.createToken(user.id);
     return {
       user,
       tokens,
@@ -65,7 +67,7 @@ export class AuthController {
     };
 
     const user = await this.userService.create(createUserData);
-    const tokens = await this.authService.createToken(user);
+    const tokens = await this.authService.createToken(user.id);
     return {
       user,
       tokens,
@@ -88,5 +90,24 @@ export class AuthController {
   @Post('reset-password')
   async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
     return this.authService.resetPassword(resetPasswordDto);
+  }
+
+  @ApiOperation({ summary: Summary.RefreshToken })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        refreshToken: {
+          type: 'string',
+        },
+      },
+      required: ['refreshToken'],
+    },
+  })
+  @Post('refresh')
+  async refresh(@Body('refreshToken') refreshToken: string): Promise<Tokens> {
+    const payload = await this.authService.verifyRefreshToken(refreshToken);
+    const token = await this.authService.createToken(payload.sub);
+    return token;
   }
 }
