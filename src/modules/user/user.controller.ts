@@ -27,6 +27,7 @@ import { CreateUserDto, UpdateUserDto } from './dto';
 import { UsersService } from './user.service';
 // import { AuthForgotPasswordDto } from '';
 import { UpdatePassword } from './dto/update-password.dto';
+import { RolesGuard } from 'modules/auth/role.guard';
 // import { RolesGuard } from 'modules/auth/roles.guard';
 
 @ApiBearerAuth()
@@ -80,7 +81,7 @@ import { UpdatePassword } from './dto/update-password.dto';
 })
 @Controller('api/users')
 @ApiTags('user')
-// @UseGuards(AuthGuard())
+@UseGuards(AuthGuard())
 export class CrudUserController implements CrudController<User> {
   constructor(public readonly service: UsersService) {}
   get base(): CrudController<User> {
