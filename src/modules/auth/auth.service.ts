@@ -69,6 +69,7 @@ export class AuthService {
     if (!user || !Hash.compare(payload.password, user.password)) {
       throw new UnauthorizedException('Invalid email or password!');
     }
+    delete user.password;
     return user;
   }
   async findRole(id: number): Promise<Role> {

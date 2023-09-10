@@ -25,7 +25,6 @@ import firebaseConfig from 'modules/config/firebase.config';
         redisConfig,
         authConfig,
         appConfig,
-        firebaseConfig,
       ],
     }),
     CacheModule.register({

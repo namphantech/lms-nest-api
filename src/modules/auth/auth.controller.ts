@@ -34,7 +34,8 @@ export class AuthController {
 
   @Post('login')
   async login(@Body() payload: LoginPayload): Promise<any> {
-    const user: User = await this.authService.validateUser(payload);
+    const user: Partial<User> = await this.authService.validateUser(payload);
+    console.log('USER', user);
     const tokens = await this.authService.createToken(user.id);
     return {
       user,
@@ -69,6 +70,7 @@ export class AuthController {
 
     const user = await this.userService.create(createUserData);
     const tokens = await this.authService.createToken(user.id);
+    delete user.password;
     return {
       user,
       tokens,

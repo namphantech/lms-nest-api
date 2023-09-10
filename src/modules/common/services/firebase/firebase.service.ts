@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import * as admin from 'firebase-admin';
 
 @Injectable()
-export class FilesService {
+export class FirebaseService {
   private bucket = admin.storage().bucket();
 
   private async uploadSingleFile(file: Express.Multer.File): Promise<string> {
