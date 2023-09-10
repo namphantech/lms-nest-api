@@ -21,6 +21,9 @@ import {
   ResetPasswordDto,
 } from './dto';
 
+import { Tokens } from './auth.service';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
+
 @Controller('api/auth')
 @ApiTags('auth')
 export class AuthController {
@@ -31,8 +34,9 @@ export class AuthController {
 
   @Post('login')
   async login(@Body() payload: LoginPayload): Promise<any> {
-    const user: User = await this.authService.validateUser(payload);
-    const tokens = await this.authService.createToken(user);
+    const user: Partial<User> = await this.authService.validateUser(payload);
+    console.log('USER', user);
+    const tokens = await this.authService.createToken(user.id);
     return {
       user,
       tokens,
@@ -65,7 +69,8 @@ export class AuthController {
     };
 
     const user = await this.userService.create(createUserData);
-    const tokens = await this.authService.createToken(user);
+    const tokens = await this.authService.createToken(user.id);
+    delete user.password;
     return {
       user,
       tokens,
@@ -84,9 +89,15 @@ export class AuthController {
     return this.authService.forgotPassword(forgotPasswordDto.email);
   }
 
-  @ApiBearerAuth()
   @Post('reset-password')
   async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
     return this.authService.resetPassword(resetPasswordDto);
+  }
+
+  @Post('refresh-token')
+  async refresh(@Body() dto: RefreshTokenDto): Promise<Tokens> {
+    const payload = await this.authService.verifyRefreshToken(dto.refreshToken);
+    const token = await this.authService.createToken(payload.sub);
+    return token;
   }
 }

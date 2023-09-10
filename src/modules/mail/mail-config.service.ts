@@ -1,4 +1,3 @@
-
 import { MailerOptions, MailerOptionsFactory } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { Injectable } from '@nestjs/common';
@@ -20,7 +19,7 @@ export class MailConfigService implements MailerOptionsFactory {
       },
       defaults: {
         from: `"${this.configService.get(
-          'mail.defaultName'
+          'mail.defaultName',
         )}" <${this.configService.get('mail.defaultEmail')}>`,
       },
       template: {
@@ -29,7 +28,7 @@ export class MailConfigService implements MailerOptionsFactory {
           'src',
           'modules',
           'mail',
-          'mail-templates'
+          'mail-templates',
         ),
         adapter: new HandlebarsAdapter(),
         options: {

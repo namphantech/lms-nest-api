@@ -13,6 +13,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { AuthModule } from '../auth';
 import { UserModule } from './../user';
 import appConfig from 'modules/config/app.config';
+import firebaseConfig from 'modules/config/firebase.config';
 @Module({
   imports: [
     ConfigModule.forRoot({
