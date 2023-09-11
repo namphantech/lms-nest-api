@@ -22,7 +22,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     if (timeDiff <= 0) {
       throw new UnauthorizedException();
     }
-    console.log('HALOHALO');
 
     const user = await this.usersService.get(sub);
     if (!user) {

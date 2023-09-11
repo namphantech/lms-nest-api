@@ -94,7 +94,6 @@ export class CrudUserController implements CrudController<User> {
     @ParsedBody() dto: CreateUserDto,
     @GetCurrentUser() user: User,
   ) {
-    console.log('ROLE', dto.roleId);
     const checkEmailUser = await this.service.findOne({
       where: {
         email: dto.email,
@@ -110,7 +109,6 @@ export class CrudUserController implements CrudController<User> {
       );
     }
     const roleData = await this.service.findRole(dto.roleId);
-    console.log(roleData);
     if (!roleData || !roleData.id) {
       throw new BadRequestException('Role not found');
     }

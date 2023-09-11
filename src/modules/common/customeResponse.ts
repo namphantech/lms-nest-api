@@ -6,7 +6,6 @@ export async function customizedResponse(inputObject: any, ...keys: any) {
       customizedObject[key] = inputObject[key];
     }
   }
-  console.log(customizedObject);
 
   return customizedObject;
 }
