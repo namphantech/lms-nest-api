@@ -14,6 +14,7 @@ import { AuthModule } from '../auth';
 import { UserModule } from './../user';
 import appConfig from 'modules/config/app.config';
 import firebaseConfig from 'modules/config/firebase.config';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -30,10 +31,9 @@ import firebaseConfig from 'modules/config/firebase.config';
     }),
     CacheModule.register({
       isGlobal: true,
-      host: 'localhost',
-      store: redisStore as any,
-      port: 6379,
-      ttl: 300,
+      port: process.env.REDIS_PORT,
+      host: process.env.REDIS_HOST,
+      ttl: Number(process.env.REDIS_TTL),
     }),
 
     TypeOrmModule.forRootAsync({
@@ -52,7 +52,7 @@ import firebaseConfig from 'modules/config/firebase.config';
             configService.get('database.isAsync') === 'false' ? false : true,
           autoLoadEntities: true,
           logging: true,
-          ssl: true,
+         // ssl: true,
           entities: [__dirname + './**/**.entity{.ts,.js}'],
         } as TypeOrmModuleAsyncOptions;
       },

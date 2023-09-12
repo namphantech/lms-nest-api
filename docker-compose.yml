@@ -1,12 +1,47 @@
+version: '3'
+networks:
+  app-networks:
+    driver: bridge
 services:
+  app:
+    env_file:
+      - .env
+    container_name: thecreativespace
+    image: 'thecreativespace:v1'
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '4000:4000'
+    networks:
+      - app-networks
+    depends_on:
+      - redis
+      - postgres
+  postgres:
+    image: postgres
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: ecommerce-nest-api-db
+    ports:
+      - '5432:5432'
+    networks:
+      - app-networks
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
   redis:
-    container_name: cache
+    container_name: redis
     image: redis
     ports:
-      - 6379:6379
+      - '6379:6379'
+    networks:
+      - app-networks
     volumes:
-      - redis:/data
-
+      - redis-data:/var/lib/redis
 volumes:
-  redis:
-    driver: local
+  postgres-data :
+  redis-data :

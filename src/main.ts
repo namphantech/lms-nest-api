@@ -1,8 +1,6 @@
 import { ValidationPipe, Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { ConfigService } from '@nestjs/config';
-import * as admin from 'firebase-admin';
 
 import { AppModule } from './modules/main/app.module';
 
@@ -11,8 +9,6 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe());
   app.enableCors();
-
-  const configService = app.get(ConfigService);
 
   //Swagger
   const config = new DocumentBuilder()
@@ -25,7 +21,7 @@ async function bootstrap() {
   SwaggerModule.setup('api/docs', app, document);
 
   // Firebase
-  admin.initializeApp(configService.get('firebase'));
+  // admin.initializeApp(configService.get('firebase'));
 
   await app.listen(parseInt(process.env.APP_PORT) || 1410);
   logger.log(`App is running on ${parseInt(process.env.APP_PORT)} port!`);
