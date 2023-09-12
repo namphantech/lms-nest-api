@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as admin from 'firebase-admin';
+import 'multer';
 
 @Injectable()
 export class FirebaseService {

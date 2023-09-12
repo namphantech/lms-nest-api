@@ -1,10 +1,8 @@
 import {
   BadRequestException,
-  Body,
   Controller,
   HttpException,
   HttpStatus,
-  Post,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -26,7 +24,7 @@ import { User } from '../entities';
 import { CreateUserDto, UpdateUserDto } from './dto';
 import { UsersService } from './user.service';
 // import { AuthForgotPasswordDto } from '';
-import { UpdatePassword } from './dto/update-password.dto';
+// import { UpdatePassword } from './dto/update-password.dto';
 import { RolesGuard } from 'modules/auth/role.guard';
 // import { RolesGuard } from 'modules/auth/roles.guard';
 
@@ -87,8 +85,9 @@ export class CrudUserController implements CrudController<User> {
   get base(): CrudController<User> {
     return this;
   }
-
   @Override('createOneBase')
+  @RolesAllowed(Roles.ADMIN)
+  @UseGuards(RolesGuard)
   async createOne(
     @ParsedRequest() req: CrudRequest,
     @ParsedBody() dto: CreateUserDto,
