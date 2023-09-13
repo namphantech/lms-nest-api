@@ -7,6 +7,7 @@ import {
   UseGuards,
   HttpStatus,
   BadRequestException,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -23,6 +24,7 @@ import {
 
 import { Tokens } from './auth.service';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { CacheInterceptor, CacheKey } from '@nestjs/cache-manager';
 
 @Controller('api/auth')
 @ApiTags('auth')
@@ -78,6 +80,8 @@ export class AuthController {
 
   @ApiBearerAuth()
   @UseGuards(AuthGuard())
+  @UseInterceptors(CacheInterceptor)
+  @CacheKey('1')
   @Get('me')
   async getLoggedInUser(@GetCurrentUser() user: User): Promise<User> {
     return user;

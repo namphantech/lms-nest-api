@@ -31,6 +31,7 @@ import firebaseConfig from 'modules/config/firebase.config';
     }),
     CacheModule.register({
       isGlobal: true,
+      store: redisStore as any,
       port: process.env.REDIS_PORT,
       host: process.env.REDIS_HOST,
       ttl: Number(process.env.REDIS_TTL),
@@ -52,7 +53,7 @@ import firebaseConfig from 'modules/config/firebase.config';
             configService.get('database.isAsync') === 'false' ? false : true,
           autoLoadEntities: true,
           logging: true,
-         // ssl: true,
+          ssl: true,
           entities: [__dirname + './**/**.entity{.ts,.js}'],
         } as TypeOrmModuleAsyncOptions;
       },
