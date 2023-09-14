@@ -37,7 +37,7 @@ lerna-debug.log*
 #not up
 
 .env
-
+.production.env
 /src/sql
 test.json
 example.env

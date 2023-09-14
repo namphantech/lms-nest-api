@@ -53,7 +53,7 @@ import firebaseConfig from 'modules/config/firebase.config';
             configService.get('database.isAsync') === 'false' ? false : true,
           autoLoadEntities: true,
           logging: true,
-          ssl: true,
+          ssl: configService.get('database.ssl') === 'true' ? true : false,
           entities: [__dirname + './**/**.entity{.ts,.js}'],
         } as TypeOrmModuleAsyncOptions;
       },

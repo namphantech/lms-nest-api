@@ -140,6 +140,7 @@ export class CrudUserController implements CrudController<User> {
   @Override('getManyBase')
   @ApiQuery({ name: 'search', type: 'string', required: false })
   async getMany(@ParsedRequest() req: CrudRequest, @Query() query) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     req.query = query;
     const users = (await this.base.getManyBase(

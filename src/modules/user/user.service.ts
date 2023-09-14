@@ -61,6 +61,7 @@ export class UsersService extends TypeOrmCrudService<User> {
   public async getMany(req: CrudRequest) {
     const { parsed, options } = req;
     const builder = await this.createBuilder(parsed, options);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const searchName = req?.query?.searchName;
     if (searchName) {
@@ -74,6 +75,7 @@ export class UsersService extends TypeOrmCrudService<User> {
         }),
       );
     }
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     let searchId = req?.query?.searchId;
     if (searchId) {

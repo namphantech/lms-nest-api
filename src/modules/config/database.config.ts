@@ -9,4 +9,5 @@ export default registerAs('database', () => ({
   database: process.env.DB_DATABASE,
   url: process.env.POSTGRES_DB_URL,
   isAsync: process.env.DB_SYNC,
+  ssl: process.env.IS_SSL,
 }));

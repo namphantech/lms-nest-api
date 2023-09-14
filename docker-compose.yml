@@ -13,7 +13,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - '4000:4000'
+      - 4000:4000
     networks:
       - app-networks
     depends_on:
@@ -28,7 +28,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_DB: ecommerce-nest-api-db
     ports:
-      - '5432:5432'
+      - 5432:5432
     networks:
       - app-networks
     volumes:
