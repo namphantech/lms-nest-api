@@ -14,7 +14,9 @@ import { AuthModule } from '../auth';
 import { UserModule } from './../user';
 import appConfig from 'modules/config/app.config';
 import firebaseConfig from 'modules/config/firebase.config';
-
+import { ProductModule } from 'modules/product/product.module';
+console.log(__dirname);
+console.log(__dirname + './**/**.entity{.ts,.js}');
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -53,7 +55,7 @@ import firebaseConfig from 'modules/config/firebase.config';
             configService.get('database.isAsync') === 'false' ? false : true,
           autoLoadEntities: true,
           logging: true,
-          ssl: configService.get('database.ssl') === 'true' ? true : false,
+          ssl: true,
           entities: [__dirname + './**/**.entity{.ts,.js}'],
         } as TypeOrmModuleAsyncOptions;
       },
@@ -65,6 +67,7 @@ import firebaseConfig from 'modules/config/firebase.config';
     }),
     AuthModule,
     UserModule,
+    ProductModule,
   ],
 })
 export class AppModule {}

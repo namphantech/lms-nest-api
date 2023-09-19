@@ -46,3 +46,4 @@ example.env
 /public
 .example.env
 .vscode
+/docs

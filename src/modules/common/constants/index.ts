@@ -13,3 +13,7 @@ export enum Status {
 export enum ResetPassword {
   SUBJECT = 'Reset password!',
 }
+export enum ProductAttribute {
+  COLOR = 'COLOR',
+  SIZE = 'SIZE',
+}
