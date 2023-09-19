@@ -4,7 +4,7 @@ import redisConfig from '../config/redis.config';
 import nodeMailConfig from '../config/mail.config';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule, TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
-import { redisStore } from 'cache-manager-redis-store';
+import { redisStore } from 'cache-manager-redis-yet';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -31,12 +31,15 @@ console.log(__dirname + './**/**.entity{.ts,.js}');
         firebaseConfig,
       ],
     }),
-    CacheModule.register({
+    CacheModule.registerAsync({
+      useFactory: async (configService: ConfigService) => ({
+        store: await redisStore({
+          url: configService.get('redis.url'),
+          ttl: configService.get('redis.ttl'),
+        }),
+      }),
       isGlobal: true,
-      store: redisStore as any,
-      port: process.env.REDIS_PORT,
-      host: process.env.REDIS_HOST,
-      ttl: Number(process.env.REDIS_TTL),
+      inject: [ConfigService],
     }),
 
     TypeOrmModule.forRootAsync({
