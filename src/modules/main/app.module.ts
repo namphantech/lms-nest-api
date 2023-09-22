@@ -1,10 +1,10 @@
-import authConfig from 'modules/config/auth.config';
+import authConfig from './../config/auth.config';
 import databaseConfig from '../config/database.config';
 import redisConfig from '../config/redis.config';
 import nodeMailConfig from '../config/mail.config';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule, TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
-import { redisStore } from 'cache-manager-redis-yet';
+import * as redisStore from 'cache-manager-redis-store';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -12,11 +12,15 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { ScheduleModule } from '@nestjs/schedule';
 import { AuthModule } from '../auth';
 import { UserModule } from './../user';
-import appConfig from 'modules/config/app.config';
-import firebaseConfig from 'modules/config/firebase.config';
-import { ProductModule } from 'modules/product/product.module';
+import appConfig from './../config/app.config';
+import { ProductModule } from './../product';
+import { CachingModule } from './../caching/caching.module';
+
 console.log(__dirname);
 console.log(__dirname + './**/**.entity{.ts,.js}');
+console.log('hello', process.env.IS_SSL);
+console.log(typeof process.env.IS_SSL);
+console.log(process.env.REDIS_HOST);
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -28,18 +32,15 @@ console.log(__dirname + './**/**.entity{.ts,.js}');
         redisConfig,
         authConfig,
         appConfig,
-        firebaseConfig,
+        // firebaseConfig,
       ],
     }),
-    CacheModule.registerAsync({
-      useFactory: async (configService: ConfigService) => ({
-        store: await redisStore({
-          url: configService.get('redis.url'),
-          ttl: configService.get('redis.ttl'),
-        }),
-      }),
+    CacheModule.register({
       isGlobal: true,
-      inject: [ConfigService],
+      store: redisStore,
+      host: process.env.REDIS_HOST,
+      port: Number(process.env.REDIS_PORT),
+      ttl: Number(process.env.REDIS_TTL),
     }),
 
     TypeOrmModule.forRootAsync({
@@ -58,8 +59,8 @@ console.log(__dirname + './**/**.entity{.ts,.js}');
             configService.get('database.isAsync') === 'false' ? false : true,
           autoLoadEntities: true,
           logging: true,
-          ssl: true,
-          entities: [__dirname + './**/**.entity{.ts,.js}'],
+          ssl: configService.get('database.ssl') === 'true' ? true : false,
+          entities: [__dirname + './../**/**.entity{.ts,.js}'],
         } as TypeOrmModuleAsyncOptions;
       },
     }),
@@ -71,6 +72,7 @@ console.log(__dirname + './**/**.entity{.ts,.js}');
     AuthModule,
     UserModule,
     ProductModule,
+    CachingModule,
   ],
 })
 export class AppModule {}

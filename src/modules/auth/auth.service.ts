@@ -16,8 +16,10 @@ import { Repository } from 'typeorm';
 import * as moment from 'moment';
 import { v4 as uuidv4 } from 'uuid';
 import { ResetPasswordDto } from './dto';
-import { MyMailService } from 'modules/mail/mail.service';
-import { Message } from 'modules/common/constants/message';
+import { MyMailService } from './../mail/mail.service';
+import { Message } from './../common/constants/message';
+import { InjectQueue } from '@nestjs/bull';
+import { Queue } from 'bull';
 export interface Tokens {
   accessToken: string;
   refreshToken: string;
@@ -30,10 +32,12 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     private readonly userService: UsersService,
-    private readonly mailService: MyMailService,
+    // private readonly mailService: MyMailService,
+    @InjectQueue('send-mail-queue') private mailQueue: Queue,
   ) {}
 
   async createToken(userId: number): Promise<Tokens> {
+    // using algorithm HS256 to generate a signature
     const issuedTime = Math.floor(Date.now() / 1000);
     const accessToken = await this.jwtService.signAsync({
       sub: userId,
@@ -106,15 +110,22 @@ export class AuthService {
       user.resetPasswordToken = resetPasswordToken;
       user.resetPasswordTokenExpire = resetPasswordTokenExpire;
       await this.userService.updateUser(user);
-      await this.mailService.forgotPassword({
+      const job = await this.mailQueue.add('reset-password', {
         to: email,
         data: {
           hash: resetPasswordToken,
         },
       });
+      // await this.mailService.forgotPassword({
+      //   to: email,
+      //   data: {
+      //     hash: resetPasswordToken,
+      //   },
+      // });
       return {
         message:
           'Your reset password request has been confirmed. Please check your email, the token will expire in 10 minutes!',
+        jobQueueId: job.id,
       };
     }
   }
@@ -141,7 +152,7 @@ export class AuthService {
         throw new HttpException(
           {
             status: HttpStatus.BAD_REQUEST,
-            messageCode: 'auth.invalidResetToken',
+            messageCode: 'invalidResetToken',
           },
           HttpStatus.BAD_REQUEST,
         );
@@ -149,7 +160,7 @@ export class AuthService {
         throw new HttpException(
           {
             status: HttpStatus.BAD_REQUEST,
-            messageCode: 'auth.expiredResetToken',
+            messageCode: 'expiredResetToken',
           },
           HttpStatus.BAD_REQUEST,
         );

@@ -16,6 +16,7 @@ export class RolesGuard implements CanActivate {
     if (!roles) {
       return true;
     }
+    console.log(roles);
 
     let isAllowed = false;
     roles.map((role) => {

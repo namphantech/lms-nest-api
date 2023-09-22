@@ -9,11 +9,25 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Role } from '../entities';
 import { MailModule } from 'modules/mail/mail.module';
+import { CachingModule } from 'modules/caching/caching.module';
+import { BullModule } from '@nestjs/bull';
+import { ResetPasswordProcessor } from './processors/reset-password.processor';
+import { MyMailService } from 'modules/mail/mail.service';
 
 @Module({
   imports: [
     UserModule,
     MailModule,
+    BullModule.registerQueue({
+      name: 'send-mail-queue',
+    }),
+    BullModule.forRoot({
+      redis: {
+        host: process.env.REDIS_HOST,
+        port: Number(process.env.REDIS_PORT),
+      },
+    }),
+    CachingModule,
     TypeOrmModule.forFeature([Role]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
@@ -34,7 +48,7 @@ import { MailModule } from 'modules/mail/mail.module';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, JwtStrategy, ResetPasswordProcessor, MyMailService],
   exports: [PassportModule.register({ defaultStrategy: 'jwt' })],
 })
 export class AuthModule {}

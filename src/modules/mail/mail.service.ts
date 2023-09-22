@@ -11,7 +11,7 @@ export class MyMailService {
     private readonly mailService: MailerService,
   ) {}
   async forgotPassword(mailData: SendMailData<{ hash: string }>) {
-    this.mailService.sendMail({
+    await this.mailService.sendMail({
       to: mailData.to,
       subject: ResetPassword.SUBJECT,
       template: './reset-password',

@@ -62,8 +62,11 @@ $ docker rm -f <id>
 
 #  List all your own built image
 $ docker image ls
+# Access to redis container
+$ docker exec -it CONTAINER_NAME_OR_ID sh
 
 
+```
 ## Test
 
 ```bash

@@ -25,7 +25,7 @@ import { CreateUserDto, UpdateUserDto } from './dto';
 import { UsersService } from './user.service';
 // import { AuthForgotPasswordDto } from '';
 // import { UpdatePassword } from './dto/update-password.dto';
-import { RolesGuard } from 'modules/auth/role.guard';
+import { RolesGuard } from './../auth/role.guard';
 // import { RolesGuard } from 'modules/auth/roles.guard';
 
 @ApiBearerAuth()
@@ -138,6 +138,8 @@ export class CrudUserController implements CrudController<User> {
   }
 
   @Override('getManyBase')
+  @RolesAllowed(Roles.ADMIN)
+  @UseGuards(RolesGuard)
   @ApiQuery({ name: 'search', type: 'string', required: false })
   async getMany(@ParsedRequest() req: CrudRequest, @Query() query) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment

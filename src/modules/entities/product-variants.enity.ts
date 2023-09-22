@@ -2,20 +2,22 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   VersionColumn,
 } from 'typeorm';
-import { ProductAttribute } from 'modules/common/constants';
-@Entity('product_attributes')
-export class ProductAttributes {
+import { ProductVariantType } from './../common/constants';
+import { VariantOption } from './variant-options.entity';
+@Entity('product_variant')
+export class ProductVariant {
   @PrimaryGeneratedColumn()
   id: number;
   @Column('enum', {
-    enum: ProductAttribute,
+    enum: ProductVariantType,
     nullable: false,
   })
-  type: ProductAttribute;
+  type: ProductVariantType;
   @CreateDateColumn({
     type: 'timestamp',
     name: 'created_at',
@@ -32,4 +34,7 @@ export class ProductAttributes {
   public updatedAt: Date;
 
   @VersionColumn() revision: number;
+
+  @OneToMany(() => VariantOption, (variantOption) => variantOption.variant)
+  variantOptions: VariantOption[];
 }
