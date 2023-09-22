@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { ProductVariantType } from './../common/constants';
 import { VariantOption } from './variant-options.entity';
-@Entity('product_variant')
+@Entity('variant')
 export class ProductVariant {
   @PrimaryGeneratedColumn()
   id: number;

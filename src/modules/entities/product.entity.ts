@@ -18,6 +18,6 @@ export class Product {
   description: string;
 
   @ManyToMany(() => ProductVariant)
-  @JoinTable({ name: 'product_variant_id' })
+  @JoinTable({ name: 'product_variant' })
   productVariants: ProductVariant[];
 }
