@@ -55,7 +55,7 @@ export class AuthController {
       throw new HttpException(
         {
           status: HttpStatus.BAD_REQUEST,
-          messageCode: 'auth.emailDuplicated',
+          messageCode: 'emailDuplicated',
         },
         HttpStatus.BAD_REQUEST,
       );
@@ -81,7 +81,7 @@ export class AuthController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard())
   @UseInterceptors(CacheInterceptor)
-  @CacheKey('1')
+  @CacheKey('me')
   @Get('me')
   async getLoggedInUser(@GetCurrentUser() user: User): Promise<User> {
     return user;

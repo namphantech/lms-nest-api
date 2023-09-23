@@ -7,7 +7,7 @@ import { Repository } from 'typeorm';
 import { createProductVaraintDto } from './dto/create-product-variant.dto';
 import { User } from 'modules/entities';
 import { VariantOption } from 'modules/entities/variant-options.entity';
-import { CreateProductVariantOptionDto } from './dto/create-product-variant-option.dto';
+// import { CreateProductVariantOptionDto } from './dto/create-product-variant-option.dto';
 
 @Injectable()
 export class ProductVariantService extends TypeOrmCrudService<ProductVariant> {

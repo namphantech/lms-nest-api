@@ -16,7 +16,7 @@ import { Repository } from 'typeorm';
 import * as moment from 'moment';
 import { v4 as uuidv4 } from 'uuid';
 import { ResetPasswordDto } from './dto';
-import { MyMailService } from './../mail/mail.service';
+// import { MyMailService } from './../mail/mail.service';
 import { Message } from './../common/constants/message';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';

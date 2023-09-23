@@ -21,8 +21,6 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
 
-  // Firebase
-  // admin.initializeApp(configService.get('firebase'));
   logger.log(typeof process.env.IS_SSL);
   await app.listen(parseInt(process.env.APP_PORT) || 1410);
   logger.log(`App is running on ${parseInt(process.env.APP_PORT)} port!`);
