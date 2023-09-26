@@ -94,12 +94,7 @@ export class AuthService {
 
     if (!user) {
       throw new HttpException(
-        {
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
-          errors: {
-            email: 'emailNotExists',
-          },
-        },
+        'emailNotExists',
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     } else {
@@ -116,12 +111,6 @@ export class AuthService {
           hash: resetPasswordToken,
         },
       });
-      // await this.mailService.forgotPassword({
-      //   to: email,
-      //   data: {
-      //     hash: resetPasswordToken,
-      //   },
-      // });
       return {
         message:
           'Your reset password request has been confirmed. Please check your email, the token will expire in 10 minutes!',

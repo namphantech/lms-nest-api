@@ -2,12 +2,10 @@ import {
   Body,
   Controller,
   Get,
-  HttpException,
   Post,
   UseGuards,
-  HttpStatus,
   BadRequestException,
-  UseInterceptors,
+  // UseInterceptors,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -24,7 +22,9 @@ import {
 
 import { Tokens } from './auth.service';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
-import { CacheInterceptor, CacheKey } from '@nestjs/cache-manager';
+import { CachingService } from 'modules/caching/caching.service';
+import { GetMeDto } from './dto/get-me.dto';
+// import { CacheKey, CacheInterceptor } from '@nestjs/cache-manager';
 
 @Controller('api/auth')
 @ApiTags('auth')
@@ -32,12 +32,15 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly userService: UsersService,
+    private readonly cachingService: CachingService,
   ) {}
 
   @Post('login')
   async login(@Body() payload: LoginPayload): Promise<any> {
     const user: Partial<User> = await this.authService.validateUser(payload);
     const tokens = await this.authService.createToken(user.id);
+    console.log(user);
+    await this.cachingService.set(`${user.id}`, user, 600);
     return {
       user,
       tokens,
@@ -52,13 +55,7 @@ export class AuthController {
       },
     });
     if (checkEmailUser && checkEmailUser.id) {
-      throw new HttpException(
-        {
-          status: HttpStatus.BAD_REQUEST,
-          messageCode: 'emailDuplicated',
-        },
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new BadRequestException('emailDuplicated');
     }
     const roleData = await this.authService.findRole(payload.roleId);
     if (!roleData || !roleData.id) {
@@ -78,13 +75,9 @@ export class AuthController {
     };
   }
 
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard())
-  @UseInterceptors(CacheInterceptor)
-  @CacheKey('me')
-  @Get('me')
-  async getLoggedInUser(@GetCurrentUser() user: User): Promise<User> {
-    return user;
+  @Post('me')
+  async getLoggedInUser(@Body() dto: GetMeDto): Promise<User> {
+    return await this.cachingService.get<User>(dto.id);
   }
 
   @Post('forgot-password')

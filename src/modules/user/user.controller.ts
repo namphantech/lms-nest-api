@@ -17,16 +17,12 @@ import {
   ParsedBody,
   ParsedRequest,
 } from '@nestjsx/crud';
-// import { GeneratePassword } from '../../utils/generatePassword';
 import { Roles } from '../common/constants';
 import { GetCurrentUser, RolesAllowed } from '../common/decorators';
 import { User } from '../entities';
 import { CreateUserDto, UpdateUserDto } from './dto';
 import { UsersService } from './user.service';
-// import { AuthForgotPasswordDto } from '';
-// import { UpdatePassword } from './dto/update-password.dto';
 import { RolesGuard } from './../auth/role.guard';
-// import { RolesGuard } from 'modules/auth/roles.guard';
 
 @ApiBearerAuth()
 @Crud({
@@ -99,13 +95,7 @@ export class CrudUserController implements CrudController<User> {
       },
     });
     if (checkEmailUser && checkEmailUser.id) {
-      throw new HttpException(
-        {
-          status: HttpStatus.BAD_REQUEST,
-          messageCode: 'auth.emailDuplicated',
-        },
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException('emailDuplicated', HttpStatus.BAD_REQUEST);
     }
     const roleData = await this.service.findRole(dto.roleId);
     if (!roleData || !roleData.id) {
@@ -150,18 +140,4 @@ export class CrudUserController implements CrudController<User> {
     )) as GetManyDefaultResponse<User>;
     return users;
   }
-
-  // @UseGuards(RolesGuard)
-  // @RolesAllowed(Roles.ADMIN)
-  // @Post('reset-password')
-  // async resetPassword(@Body() resetPasswordDto: AuthForgotPasswordDto) {
-  //   return await this.service.resetPasswordByAdmin(resetPasswordDto.email);
-  // }
-
-  // // @UseGuards(RolesGuard)
-  // @RolesAllowed(Roles.ADMIN)
-  // @Post('create-new-password')
-  // async updateNewPassWord(@Body() updatePasswordDto: UpdatePassword) {
-  //   return await this.service.updateNewPassWord(updatePasswordDto);
-  // }
 }
