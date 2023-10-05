@@ -128,31 +128,14 @@ export class AuthService {
 
     if (!user) {
       throw new HttpException(
-        {
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
-          errors: {
-            email: 'emailNotExists',
-          },
-        },
+        'emailNotExists',
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     } else {
       if (resetPasswordDto.resetPasswordToken !== user.resetPasswordToken) {
-        throw new HttpException(
-          {
-            status: HttpStatus.BAD_REQUEST,
-            messageCode: 'invalidResetToken',
-          },
-          HttpStatus.BAD_REQUEST,
-        );
+        throw new HttpException('invalidResetToken', HttpStatus.BAD_REQUEST);
       } else if (moment().isAfter(moment(user.resetPasswordTokenExpire))) {
-        throw new HttpException(
-          {
-            status: HttpStatus.BAD_REQUEST,
-            messageCode: 'expiredResetToken',
-          },
-          HttpStatus.BAD_REQUEST,
-        );
+        throw new HttpException('expiredResetToken', HttpStatus.BAD_REQUEST);
       } else if (
         user.resetPasswordTokenExpire &&
         user.resetPasswordToken &&

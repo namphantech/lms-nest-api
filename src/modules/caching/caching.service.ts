@@ -5,45 +5,36 @@ import {
 } from '@nestjs/common';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
-import { InjectRepository } from '@nestjs/typeorm';
-import { MyCache } from './../entities/cache.entity';
-import { Repository } from 'typeorm';
+import { UsersService } from './../user';
 
 @Injectable()
 export class CachingService {
   constructor(
     @Inject(CACHE_MANAGER) private readonly cache: Cache,
-    @InjectRepository(MyCache) private readonly cacheRepo: Repository<MyCache>,
+    private readonly userService: UsersService,
   ) {}
 
-  async get<T>(key: string): Promise<T | undefined> {
-    const jsonData: string | undefined = await this.cache.get<string>(key);
-    if (jsonData) {
-      return JSON.parse(jsonData);
-    }
-    const dataFromDB = await this.cacheRepo.findOne({
-      where: {
-        key,
-      },
-    });
-    this.cache.set(dataFromDB.key, dataFromDB.value, dataFromDB.ttl);
+  async get<T>(key: string): Promise<T> {
+    const cachedData: string | null = await this.cache.get<string>(key);
 
-    return JSON.parse(dataFromDB.value);
+    if (cachedData) {
+      return JSON.parse(cachedData);
+    }
+
+    const dataFromDB = await this.getDataFromDB<T>(key);
+    await this.cacheData(key, dataFromDB);
+
+    return dataFromDB;
   }
 
-  async set(key: string, value: unknown, ttl = 0): Promise<void> {
+  private async getDataFromDB<T>(key: string): Promise<T> {
+    const dataFromDB = await this.userService.get(Number(key));
+    return dataFromDB as unknown as T;
+  }
+
+  async cacheData(key: string, data: unknown, ttl = 300): Promise<void> {
     try {
-      await this.cache.set(key, JSON.stringify(value), ttl);
-      await this.cacheRepo.upsert(
-        {
-          key,
-          value: JSON.stringify(value),
-          ttl,
-        },
-        {
-          conflictPaths: ['key'],
-        },
-      );
+      await this.cache.set(key, JSON.stringify(data), { ttl });
     } catch (error) {
       throw new InternalServerErrorException();
     }

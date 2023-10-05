@@ -36,11 +36,7 @@ import { MyMailService } from 'modules/mail/mail.service';
         return {
           secret: configService.get('auth.secret'),
           signOptions: {
-            ...(configService.get('auth.jwtExpires')
-              ? {
-                  expiresIn: configService.get('auth.jwtExpires'),
-                }
-              : {}),
+            expiresIn: configService.get('auth.jwtExpires'),
           },
         };
       },

@@ -9,11 +9,11 @@ export class ResetPasswordProcessor {
   @Process('reset-password')
   async sendResetPasswordEmail(job: Job<SendMailData<{ hash: string }>>) {
     const { data } = job;
-    console.log('DATA FOR SEND EMAIL', data);
-    try {
-      await this.mailService.forgotPassword(data);
-    } catch (error) {
-      console.error(error);
-    }
+
+    await this.mailService.forgotPassword(data);
+    console.log(`Job completed with ${job.id}`);
+    return {
+      jobQueueId: job.id,
+    };
   }
 }

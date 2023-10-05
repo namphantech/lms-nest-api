@@ -10,8 +10,7 @@ config();
 // You can also make a singleton service that load and expose the .env file content.
 // ...
 // Check typeORM documentation for more information.
-export const ormconfig: TypeOrmModuleOptions = {
-  driver: 'postgres',
+const ormconfig: TypeOrmModuleOptions = {
   type: 'postgres',
   host: process.env.DB_HOST,
   port: Number(process.env.DB_PORT),
@@ -22,18 +21,20 @@ export const ormconfig: TypeOrmModuleOptions = {
 
   // We are using migrations, synchronize should be set to false.
   synchronize: false,
-  migrationsTableName: 'nam_migration_table',
+  migrationsTableName: 'migration_table',
   // Run migrations automatically,
   // you can disable this if you prefer running migration manually.
   migrationsRun: true,
   logging: true,
   logger: 'file',
+  ssl: true,
 
   // allow both start:prod and start:dev to use migrations
   // __dirname is either dist or src folder, meaning either
   // the compiled js in prod or the ts in dev
-  migrations: [__dirname + '/src/migrations/*{.ts,.js}'],
+  migrations: [__dirname + '/dist/migrations/*{.ts,.js}'],
   cli: {
     migrationsDir: 'src/migrations',
   },
 };
+export default ormconfig;

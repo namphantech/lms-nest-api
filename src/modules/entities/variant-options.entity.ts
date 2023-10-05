@@ -9,11 +9,13 @@ import {
   VersionColumn,
 } from 'typeorm';
 import { ProductVariant } from './product-variants.enity';
+import {  ApiProperty } from '@nestjs/swagger';
 @Entity('variant_option')
 export class VariantOption {
+  @ApiProperty()
   @PrimaryGeneratedColumn()
   id: number;
-
+  @ApiProperty()
   @Column('character varying')
   value: string;
 
@@ -34,7 +36,9 @@ export class VariantOption {
 
   @VersionColumn() revision: number;
 
-  @ManyToOne(() => ProductVariant, (variant) => variant.variantOptions)
+  @ManyToOne(() => ProductVariant, (variant) => variant.variantOptions,{
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'variant_id' })
   variant: ProductVariant;
 }

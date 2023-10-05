@@ -9,15 +9,20 @@ import {
 } from 'typeorm';
 import { ProductVariantType } from './../common/constants';
 import { VariantOption } from './variant-options.entity';
+import { ApiProperty } from '@nestjs/swagger';
 @Entity('variant')
 export class ProductVariant {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @ApiProperty()
   @Column('enum', {
     enum: ProductVariantType,
     nullable: false,
+    unique: true,
   })
   type: ProductVariantType;
+
   @CreateDateColumn({
     type: 'timestamp',
     name: 'created_at',
@@ -35,6 +40,9 @@ export class ProductVariant {
 
   @VersionColumn() revision: number;
 
+  @ApiProperty({
+    type: [VariantOption],
+  })
   @OneToMany(() => VariantOption, (variantOption) => variantOption.variant)
   variantOptions: VariantOption[];
 }

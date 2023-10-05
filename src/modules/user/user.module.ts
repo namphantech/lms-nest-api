@@ -5,11 +5,9 @@ import { Role } from '../entities/role.entity';
 import { User } from '../entities/user.entity';
 import { CrudUserController } from './user.controller';
 import { UsersService } from './user.service';
-import { CachingModule } from './../caching/caching.module';
 
 @Module({
   imports: [
-    CachingModule,
     TypeOrmModule.forFeature([User, Role]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
   ],

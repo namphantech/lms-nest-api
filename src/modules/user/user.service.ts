@@ -13,7 +13,6 @@ export class UsersService extends TypeOrmCrudService<User> {
     private readonly userRepository: Repository<User>,
     @InjectRepository(Role)
     private readonly roleRepository: Repository<Role>,
-    private readonly cachingService: CachingService,
   ) {
     super(userRepository);
   }

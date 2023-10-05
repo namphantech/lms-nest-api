@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { CachingService } from './caching.service';
 import { CachingController } from './caching.controller';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { MyCache } from './../entities/cache.entity';
+import { PassportModule } from '@nestjs/passport';
+import { UserModule } from './../user';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([MyCache])],
+  imports: [PassportModule.register({ defaultStrategy: 'jwt' }), UserModule],
   controllers: [CachingController],
   providers: [CachingService],
   exports: [CachingService],
