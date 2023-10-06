@@ -35,9 +35,9 @@ import { WishlistModule } from './../wishlist/wishlist.module';
     CacheModule.register({
       isGlobal: true,
       store: redisStore,
-      // host: process.env.REDIS_HOST,
-      // port: Number(process.env.REDIS_PORT),
-      url: process.env.REDIS_URL,
+      host: process.env.REDIS_HOST,
+      port: Number(process.env.REDIS_PORT),
+      //url: process.env.REDIS_URL,
       ttl: Number(process.env.REDIS_TTL),
     }),
 

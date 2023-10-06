@@ -9,8 +9,7 @@ import {
   Column,
   CreateDateColumn,
 } from 'typeorm';
-
-@Entity()
+@Entity('wishlist')
 export class Wishlist {
   @PrimaryGeneratedColumn()
   id: number;

@@ -11,6 +11,7 @@ import {
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Category } from './category.entity';
 import { Wishlist } from './wishlist.entity';
+
 @Entity('product')
 export class Product {
   @PrimaryGeneratedColumn()
@@ -23,6 +24,23 @@ export class Product {
   @ApiProperty()
   @Column('text')
   description: string;
+
+  @ApiProperty()
+  @Column('numeric', {
+    nullable: false,
+    precision: 11,
+    scale: 2,
+    default: null,
+  })
+  price: number;
+
+  @Column({
+    default: null,
+  })
+  quantity: number;
+
+  @Column('jsonb', { name: 'image_url', nullable: true })
+  public image: string[];
 
   @ApiProperty()
   @ApiPropertyOptional()

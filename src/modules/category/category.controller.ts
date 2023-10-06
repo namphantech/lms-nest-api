@@ -12,7 +12,9 @@ import { Category, User } from './../entities';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { CategoryService } from './category.service';
 import { AuthGuard } from '@nestjs/passport';
-import { GetCurrentUser } from './../common/decorators';
+import { GetCurrentUser, RolesAllowed } from './../common/decorators';
+import { Roles } from 'modules/common/constants';
+import { RolesGuard } from 'modules/auth/role.guard';
 @ApiBearerAuth()
 @Crud({
   model: {
@@ -26,7 +28,11 @@ import { GetCurrentUser } from './../common/decorators';
       'updateOneBase',
       'deleteOneBase',
     ],
+    createOneBase: {
+      decorators: [RolesAllowed(Roles.ADMIN)],
+    },
   },
+
   dto: {
     create: CreateCategoryDto,
     update: CreateCategoryDto,
@@ -56,12 +62,12 @@ import { GetCurrentUser } from './../common/decorators';
 @UseGuards(AuthGuard())
 @ApiTags('category')
 @Controller('api/category')
-export class CrudCategoryController implements CrudController<Category>{
+export class CrudCategoryController implements CrudController<Category> {
   constructor(public readonly service: CategoryService) {}
   get base(): CrudController<Category> {
     return this;
   }
-
+  @UseGuards(RolesGuard)
   @Override('createOneBase')
   async createOne(
     @ParsedRequest() req: CrudRequest,

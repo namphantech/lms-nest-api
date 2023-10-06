@@ -9,7 +9,7 @@ import {
   VersionColumn,
 } from 'typeorm';
 import { ProductVariant } from './product-variants.enity';
-import {  ApiProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 @Entity('variant_option')
 export class VariantOption {
   @ApiProperty()
@@ -36,7 +36,7 @@ export class VariantOption {
 
   @VersionColumn() revision: number;
 
-  @ManyToOne(() => ProductVariant, (variant) => variant.variantOptions,{
+  @ManyToOne(() => ProductVariant, (variant) => variant.variantOptions, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'variant_id' })

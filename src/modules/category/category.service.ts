@@ -9,7 +9,7 @@ export class CategoryService extends TypeOrmCrudService<Category> {
   constructor(
     @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,
-  ){
+  ) {
     super(categoryRepository);
   }
 }
