@@ -1,18 +1,15 @@
 import {
   Body,
   Controller,
-  Get,
-  HttpException,
   Post,
-  UseGuards,
-  HttpStatus,
   BadRequestException,
+  UseGuards,
+  Get,
   UseInterceptors,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+// import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './';
-import { GetCurrentUser } from './../common/decorators';
 import { UsersService } from './../user';
 import { User } from '../entities';
 import {
@@ -24,7 +21,11 @@ import {
 
 import { Tokens } from './auth.service';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { CachingService } from './../caching/caching.service';
+import { GetCurrentUser } from './../common/decorators';
+import { AuthGuard } from '@nestjs/passport';
 import { CacheInterceptor, CacheKey } from '@nestjs/cache-manager';
+// import { CacheKey, CacheInterceptor } from '@nestjs/cache-manager';
 
 @Controller('api/auth')
 @ApiTags('auth')
@@ -32,12 +33,15 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly userService: UsersService,
+    private readonly cachingService: CachingService,
   ) {}
 
   @Post('login')
   async login(@Body() payload: LoginPayload): Promise<any> {
     const user: Partial<User> = await this.authService.validateUser(payload);
     const tokens = await this.authService.createToken(user.id);
+    console.log(user);
+    await this.cachingService.cacheData(`${user.id}`, user, 100);
     return {
       user,
       tokens,
@@ -52,13 +56,7 @@ export class AuthController {
       },
     });
     if (checkEmailUser && checkEmailUser.id) {
-      throw new HttpException(
-        {
-          status: HttpStatus.BAD_REQUEST,
-          messageCode: 'emailDuplicated',
-        },
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new BadRequestException('emailDuplicated');
     }
     const roleData = await this.authService.findRole(payload.roleId);
     if (!roleData || !roleData.id) {
@@ -77,11 +75,10 @@ export class AuthController {
       tokens,
     };
   }
-
+  @UseInterceptors(CacheInterceptor)
+  @CacheKey('test')
   @ApiBearerAuth()
   @UseGuards(AuthGuard())
-  @UseInterceptors(CacheInterceptor)
-  @CacheKey('me')
   @Get('me')
   async getLoggedInUser(@GetCurrentUser() user: User): Promise<User> {
     return user;

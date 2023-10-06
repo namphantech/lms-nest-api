@@ -1,16 +1,11 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotAcceptableException,
-} from '@nestjs/common';
+import { Injectable, NotAcceptableException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CrudRequest } from '@nestjsx/crud';
 import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 import { Brackets, Repository } from 'typeorm';
 import { Role } from '../entities/role.entity';
 import { User } from '../entities/user.entity';
-import { UpdatePassword } from './dto/update-password.dto';
-import { Hash } from 'utils/Hash';
+import { CachingService } from './../caching/caching.service';
 @Injectable()
 export class UsersService extends TypeOrmCrudService<User> {
   constructor(
@@ -90,39 +85,5 @@ export class UsersService extends TypeOrmCrudService<User> {
       );
     }
     return this.doGetMany(builder, parsed, options);
-  }
-  public async resetPasswordByAdmin(email: string) {
-    const findUser = await this.userRepository.findOne({
-      where: {
-        email,
-      },
-      select: ['id', 'email'],
-    });
-    if (!findUser) {
-      this.throwBadRequestException('Email not exists');
-    }
-    const createRandomPassword = Math.round(Math.random() * 1e9);
-    return {
-      ...findUser,
-      randomPassword: createRandomPassword,
-    };
-  }
-  public async updateNewPassWord(updatePassword: UpdatePassword) {
-    const user = await this.userRepository.findOne({
-      where: {
-        id: updatePassword.id,
-      },
-    });
-    const hashPassword = Hash.make(updatePassword.newPassword);
-    const updateNewPassword = await this.userRepository.save({
-      ...user,
-      password: hashPassword,
-    });
-    if (!updateNewPassword) {
-      throw new BadRequestException('update password failed');
-    }
-    return {
-      message: 'update password success',
-    };
   }
 }

@@ -24,6 +24,7 @@ import { MyMailService } from 'modules/mail/mail.service';
     BullModule.forRoot({
       redis: {
         host: process.env.REDIS_HOST,
+        password: process.env.REDIS_PASSWORD,
         port: Number(process.env.REDIS_PORT),
       },
     }),
@@ -36,11 +37,7 @@ import { MyMailService } from 'modules/mail/mail.service';
         return {
           secret: configService.get('auth.secret'),
           signOptions: {
-            ...(configService.get('auth.jwtExpires')
-              ? {
-                  expiresIn: configService.get('auth.jwtExpires'),
-                }
-              : {}),
+            expiresIn: configService.get('auth.jwtExpires'),
           },
         };
       },

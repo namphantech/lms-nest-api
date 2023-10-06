@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ProductController } from './product.controller';
+import { CrudProductController } from './product.controller';
 import { ProductService } from './index';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductVariant } from './../entities/product-variants.enity';
@@ -15,7 +15,7 @@ import { VariantOption } from 'modules/entities/variant-options.entity';
     TypeOrmModule.forFeature([Product, ProductVariant, User, VariantOption]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
   ],
-  controllers: [ProductController, ProductVariantController],
+  controllers: [CrudProductController, ProductVariantController],
   providers: [ProductService, ProductVariantService],
   exports: [ProductService, ProductVariantService],
 })

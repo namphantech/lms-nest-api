@@ -15,12 +15,9 @@ import { UserModule } from './../user';
 import appConfig from './../config/app.config';
 import { ProductModule } from './../product';
 import { CachingModule } from './../caching/caching.module';
+import { CategoryModule } from './../category/category.module';
+import { WishlistModule } from './../wishlist/wishlist.module';
 
-console.log(__dirname);
-console.log(__dirname + './**/**.entity{.ts,.js}');
-console.log('hello', process.env.IS_SSL);
-console.log(typeof process.env.IS_SSL);
-console.log(process.env.REDIS_HOST);
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -40,6 +37,8 @@ console.log(process.env.REDIS_HOST);
       store: redisStore,
       host: process.env.REDIS_HOST,
       port: Number(process.env.REDIS_PORT),
+      password: process.env.REDIS_PASSWORD,
+      //url: process.env.REDIS_URL,
       ttl: Number(process.env.REDIS_TTL),
     }),
 
@@ -73,6 +72,8 @@ console.log(process.env.REDIS_HOST);
     UserModule,
     ProductModule,
     CachingModule,
+    CategoryModule,
+    WishlistModule,
   ],
 })
 export class AppModule {}
