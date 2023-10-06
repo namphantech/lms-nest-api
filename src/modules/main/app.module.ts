@@ -37,6 +37,7 @@ import { WishlistModule } from './../wishlist/wishlist.module';
       store: redisStore,
       host: process.env.REDIS_HOST,
       port: Number(process.env.REDIS_PORT),
+      password: process.env.REDIS_PASSWORD,
       //url: process.env.REDIS_URL,
       ttl: Number(process.env.REDIS_TTL),
     }),
