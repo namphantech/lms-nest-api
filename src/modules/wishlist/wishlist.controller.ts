@@ -5,10 +5,9 @@ import {
   Get,
   Param,
   Post,
-  Request,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { RolesAllowed } from '../common/decorators/roles.decorator';
 import { Roles } from './../common/constants/index';
 import { AddToWishlistDto } from './dto/addToWishlist';
@@ -19,11 +18,12 @@ import { GetCurrentUser } from 'modules/common/decorators';
 import { User } from 'modules/entities';
 
 @ApiTags('wishlist')
+@ApiBearerAuth()
+@UseGuards(AuthGuard())
 @Controller('api/wishlist')
 export class WishlistController {
   constructor(private wishlistService: WishlistService) {}
 
-  @UseGuards(AuthGuard())
   @Post('')
   addToWishlist(
     @Body() wishlistDto: AddToWishlistDto,
@@ -32,13 +32,11 @@ export class WishlistController {
     return this.wishlistService.addToWishlist(wishlistDto, user);
   }
 
-  @UseGuards(AuthGuard())
   @Get('')
   getWishlistProducts(@GetCurrentUser() user: User): Promise<Wishlist[]> {
     return this.wishlistService.getWishlistItems(user.id);
   }
 
-  @UseGuards(AuthGuard())
   @Delete('/:productId')
   deleteWishlistItem(
     @GetCurrentUser() user: User,
@@ -47,7 +45,6 @@ export class WishlistController {
     return this.wishlistService.deleteWishlistItem(user.id, productId);
   }
 
-  @UseGuards(AuthGuard())
   @Delete('')
   deleteWishlistItems(@GetCurrentUser() user: User): Promise<void> {
     return this.wishlistService.deleteWishlistItems(user);
