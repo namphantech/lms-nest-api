@@ -2,6 +2,7 @@ import authConfig from './../config/auth.config';
 import databaseConfig from '../config/database.config';
 import redisConfig from '../config/redis.config';
 import nodeMailConfig from '../config/mail.config';
+import appConfig from './../config/app.config';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule, TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
 import * as redisStore from 'cache-manager-redis-store';
@@ -12,11 +13,9 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { ScheduleModule } from '@nestjs/schedule';
 import { AuthModule } from '../auth';
 import { UserModule } from './../user';
-import appConfig from './../config/app.config';
-import { ProductModule } from './../product';
 import { CachingModule } from './../caching/caching.module';
-import { CategoryModule } from './../category/category.module';
-import { WishlistModule } from './../wishlist/wishlist.module';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { TransformInterceptor } from 'modules/config/rest/transform.interceptor';
 
 @Module({
   imports: [
@@ -70,10 +69,13 @@ import { WishlistModule } from './../wishlist/wishlist.module';
     }),
     AuthModule,
     UserModule,
-    ProductModule,
     CachingModule,
-    CategoryModule,
-    WishlistModule,
+  ],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TransformInterceptor,
+    },
   ],
 })
 export class AppModule {}
