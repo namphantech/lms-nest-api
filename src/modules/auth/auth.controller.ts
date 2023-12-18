@@ -5,7 +5,6 @@ import {
   BadRequestException,
   UseGuards,
   Get,
-  UseInterceptors,
 } from '@nestjs/common';
 // import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -24,8 +23,6 @@ import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { CachingService } from './../caching/caching.service';
 import { GetCurrentUser } from './../common/decorators';
 import { AuthGuard } from '@nestjs/passport';
-import { CacheInterceptor, CacheKey } from '@nestjs/cache-manager';
-// import { CacheKey, CacheInterceptor } from '@nestjs/cache-manager';
 
 @Controller('api/auth')
 @ApiTags('auth')
@@ -40,7 +37,6 @@ export class AuthController {
   async login(@Body() payload: LoginPayload): Promise<any> {
     const user: Partial<User> = await this.authService.validateUser(payload);
     const tokens = await this.authService.createToken(user.id);
-    console.log(user);
     await this.cachingService.cacheData(`${user.id}`, user, 100);
     return {
       user,
@@ -75,8 +71,7 @@ export class AuthController {
       tokens,
     };
   }
-  @UseInterceptors(CacheInterceptor)
-  @CacheKey('test')
+
   @ApiBearerAuth()
   @UseGuards(AuthGuard())
   @Get('me')
