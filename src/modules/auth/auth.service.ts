@@ -10,13 +10,11 @@ import { Role } from '../entities';
 import { UsersService } from './../user';
 import { LoginPayload } from './dto';
 import { ConfigService } from '@nestjs/config';
-// import { userInfo } from 'os';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as moment from 'moment';
 import { v4 as uuidv4 } from 'uuid';
 import { ResetPasswordDto } from './dto';
-// import { MyMailService } from './../mail/mail.service';
 import { Message } from './../common/constants/message';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
@@ -112,8 +110,8 @@ export class AuthService {
         },
       });
       return {
-        message:
-          'Your reset password request has been confirmed. Please check your email, the token will expire in 10 minutes!',
+        // message:
+        //   'Your reset password request has been confirmed. Please check your email, the token will expire in 10 minutes!',
         jobQueueId: job.id,
       };
     }

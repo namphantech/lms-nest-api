@@ -3,6 +3,7 @@ import databaseConfig from '../config/database.config';
 import redisConfig from '../config/redis.config';
 import nodeMailConfig from '../config/mail.config';
 import appConfig from './../config/app.config';
+import googleConfig from 'modules/config/google.config';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule, TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
 import * as redisStore from 'cache-manager-redis-store';
@@ -14,8 +15,9 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { AuthModule } from '../auth';
 import { UserModule } from './../user';
 import { CachingModule } from './../caching/caching.module';
-import { APP_INTERCEPTOR } from '@nestjs/core';
-import { TransformInterceptor } from 'modules/config/rest/transform.interceptor';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
+import { TransformInterceptor } from '../config/rest/transform.interceptor';
+import { ExceptionFilter } from '../config/exception/exception';
 
 @Module({
   imports: [
@@ -28,6 +30,7 @@ import { TransformInterceptor } from 'modules/config/rest/transform.interceptor'
         redisConfig,
         authConfig,
         appConfig,
+        googleConfig,
         // firebaseConfig,
       ],
     }),
@@ -75,6 +78,10 @@ import { TransformInterceptor } from 'modules/config/rest/transform.interceptor'
     {
       provide: APP_INTERCEPTOR,
       useClass: TransformInterceptor,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: ExceptionFilter,
     },
   ],
 })
